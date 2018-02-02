@@ -9,6 +9,20 @@ The communication between FUSIPC and FSX is provided by .NET CORE software archi
 
 In general, will contain the following features (Almost %70 done)
 
+**Most Important Features**
+
+- Touch-enabled and Realistic Flight Control System (FMS) with Mobile Application Interface
+
+This system will be developed on Android and IOS so that you will be able to transform your existing tablet into an FMS interface, so that you can enjoy all the features of FMS. So you can now control your FMS inputs and controls realistically via the tablet.
+
+A 7inch size tablet will suffice for this system. You will be able to communicate directly with FSX over the Wifi module on Arduino or on the wifi network in your home / office.
+
+- Real-time Flight Motion and State Model with Scale Plane
+
+This feature shows the realtime the plane motion and position in air with the scale model plane on your desk :)
+
+*Also added two propeller (and fans) to simulate air flow on your face :)*
+
 **LCD Panel #1 - Auto Pilot Info Screen (Manual Settings with Rotary Encoder)** 
 
 - Auto Pilot Altitude
@@ -41,11 +55,7 @@ In general, will contain the following features (Almost %70 done)
 - Current Weather information with scrolling options
 - Other text based informations wil go here...
 
-**Real-time Flight Motion and State Model with Scale Plane***
 
-This feature shows the realtime the plane motion and position in air with the scale model plane on your desk :)
-
-*Also added two propeller (and fans) to simulate air flow on your face :)*
 
 In addition, there are LED-assisted warning lights that reflect the current aircraft instrument information instantly and visually. These warnings in general; Flap states, Landing gear states (each one individually), deceleration flap state, important warnings and motor conditions.
 
