@@ -41,7 +41,7 @@ In general, will contain the following features (Almost %70 done)
 
 **Real-time Flight Motion and State Model with Scale Plane***
 
-This feature shows the realtime plane motion and position in air with scale model plane on your desk :)
+This feature shows the realtime the plane motion and position in air with the scale model plane on your desk :)
 
 *Also added two propeller (and fans) to simulate air flow on your face :)*
 
