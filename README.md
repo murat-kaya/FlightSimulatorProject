@@ -1,4 +1,4 @@
-# FlightSimulatorProject
+# Real Environment Supported Interactive Flight Simulator Project
 Real Environment Project for Microsoft Flight Simulator X using with .NET CORE, FSUIPC API and Arduino 
 
 The purpose of this project is to communicate with Microsoft Flight Simulator using the Arduino interface card over FSUIPC API and to make real-time, interactive flight simulator.
@@ -39,6 +39,11 @@ In general, will contain the following features (Almost %70 done)
 - Current Weather information with scrolling options
 - Other text based informations wil go here...
 
+**Real-time Flight Motion and State Model with Scale Plane***
+
+This feature shows the realtime plane motion and position in air with scale model plane on your desk :)
+
+*Also added two propeller (and fans) to simulate air flow on your face :)*
 
 In addition, there are LED-assisted warning lights that reflect the current aircraft instrument information instantly and visually. These warnings in general; Flap states, Landing gear states (each one individually), deceleration flap state, important warnings and motor conditions.
 
