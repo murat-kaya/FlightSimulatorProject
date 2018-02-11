@@ -7,6 +7,7 @@ byte LCDCache [Cache_Size];
 static int xUpdateMin, yUpdateMin, xUpdateMax,yUpdateMax;
 static int Cursor_X, Cursor_Y;
 
+
 void LCD::Setup() {
   pinMode(PIN_SCE, OUTPUT);
   pinMode(PIN_RESET, OUTPUT);
@@ -461,14 +462,33 @@ float lineY, lineY1;
 
 void LCD::drawAxisLines(int angle, int clearBit) {
 
+ int upper = 5;
+  lineX = round(LCD_X / 2 + ((RADIUS-4) * cos(-angle * PI / 180) ));
+  lineY = round(LCD_Y / 2 + ((RADIUS-4) * sin(-angle * PI / 180)));
+  lineX1 = round(LCD_X / 2 + ((RADIUS-4) * cos(-(180 + angle) * PI / 180)) );
+  lineY1 = round(LCD_Y / 2 + ((RADIUS-4) * sin(-(180 + angle) * PI / 180)));
+  
+  int lineTX = round(LCD_X / 2 + ((RADIUS-20) * cos(-angle * PI / 180) ));
+  int lineTY = round(LCD_Y / 2 + ((RADIUS-20) * sin(-angle * PI / 180)));
+  int lineTX1 = round(LCD_X / 2 + ((RADIUS-20) * cos(-(180 + angle) * PI / 180)) );
+  int lineTY1 = round(LCD_Y / 2 + ((RADIUS-20) * sin(-(180 + angle) * PI / 180)));
+  int lineTX2 = round(LCD_X / 2 + ((RADIUS-20) * cos(-(90 + angle) * PI / 180)) );
+  int lineTY2 = round(LCD_Y / 2 + ((RADIUS-20) * sin(-(90 + angle) * PI / 180)));
 
-  lineX = round(LCD_X / 2 + (RADIUS * cos(-angle * PI / 180) ));
-  lineY = round(LCD_Y / 2 + (RADIUS * sin(-angle * PI / 180)));
-  lineX1 = round(LCD_X / 2 + (RADIUS * cos(-(180 + angle) * PI / 180)) );
-  lineY1 = round(LCD_Y / 2 + (RADIUS * sin(-(180 + angle) * PI / 180)));
 
+  drawLine(48, 32 - upper , lineX , lineY, clearBit);
+  drawLine(48, 32 - upper, lineX1, lineY1, clearBit);
+  drawTriangle(lineTX, lineTY,lineTX1, lineTY1,lineTX2, lineTY2, clearBit); //Head Sign
 
-  drawLine(48, 32, lineX, lineY, clearBit);
-  drawLine(48, 32, lineX1, lineY1, clearBit);
-
+setCursor(46,0);
+print(angle);
+if(angle>0)
+{
+print(" \033 ");//<-
 }
+else if (angle<0)
+{
+print(" \032 ");//->
+}
+}
+

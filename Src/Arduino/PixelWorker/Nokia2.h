@@ -16,7 +16,7 @@
 #define LCD_X 96
 #define LCD_Y 65
 #define Cache_Size 96 * 9
-#define RADIUS 30
+#define RADIUS 25
 
 #define SetYAddr 0xB0
 #define SetXAddr4 0x00
