@@ -4,7 +4,7 @@
 #include <avr/pgmspace.h>
 
 byte LCDCache [Cache_Size];
-static int xUpdateMin, yUpdateMin, xUpdateMax,yUpdateMax;
+static int xUpdateMin, yUpdateMin, xUpdateMax, yUpdateMax;
 static int Cursor_X, Cursor_Y;
 
 
@@ -28,9 +28,9 @@ void LCD::Setup() {
 void LCD::Clear() {
   for (int index = 0; index < 864 ; index++)
   {
-   LCDCache[index] = (0x00);
+    LCDCache[index] = (0x00);
   }
-  UpdateBox(0, 0, LCD_X - 1, LCD_Y - 1); 
+  UpdateBox(0, 0, LCD_X - 1, LCD_Y - 1);
 }
 
 void LCD::Initialise() {
@@ -44,7 +44,7 @@ void LCD::Initialise() {
   WriteLCD(LCD_C, 0xAF); // Display ON
 
   WriteLCD(LCD_C, 0x24 | 0x04);
-  WriteLCD(LCD_C, 0x80 | (0xF3& 0x1F));
+  WriteLCD(LCD_C, 0x80 | (0xF3 & 0x1F));
 }
 
 void LCD::WriteLCD(byte dc, byte data) {
@@ -54,7 +54,7 @@ void LCD::WriteLCD(byte dc, byte data) {
   digitalWrite(PIN_SCLK, LOW);
   shiftOut(PIN_SDIN, PIN_SCLK, MSBFIRST, data); // SDIN is: sampled at the rising edge of SCLK.
   digitalWrite(PIN_SCE, HIGH);
- }
+}
 
 void LCD::UpdateBox (int xmin, int ymin, int xmax, int ymax) {
   if (xmin < xUpdateMin) xUpdateMin = xmin;
@@ -65,45 +65,45 @@ void LCD::UpdateBox (int xmin, int ymin, int xmax, int ymax) {
 
 void LCD::drawPixel (int16_t x, int16_t y, uint16_t color) {
   if ((x < 0) || (x >= LCD_X) || (y < 0) || (y >= LCD_Y))
-  return;
-  
+    return;
+
   if (color)
-    LCDCache[x+ (y/8)*LCD_X] |= _BV(y%8);
+    LCDCache[x + (y / 8)*LCD_X] |= _BV(y % 8);
   else
-    LCDCache[x+ (y/8)*LCD_X] &= ~_BV(y%8); 
-  
-  UpdateBox(x,y,x,y);
+    LCDCache[x + (y / 8)*LCD_X] &= ~_BV(y % 8);
+
+  UpdateBox(x, y, x, y);
 }
 
- void LCD::Update() {
-  for(int p = 0; p < 9; p++){
-    if(yUpdateMin >= ((p+1) *8)) {
+void LCD::Update() {
+  for (int p = 0; p < 9; p++) {
+    if (yUpdateMin >= ((p + 1) * 8)) {
       continue;
     }
-    if(yUpdateMax < p*8){
-        break;
+    if (yUpdateMax < p * 8) {
+      break;
     }
-    WriteLCD(LCD_C, SetYAddr | p); 
-    
+    WriteLCD(LCD_C, SetYAddr | p);
+
     int col = xUpdateMin;
     int maxcol = xUpdateMax;
-      
-    WriteLCD(LCD_C, SetXAddr4 | (col - (16 * (col/16))));
+
+    WriteLCD(LCD_C, SetXAddr4 | (col - (16 * (col / 16))));
     WriteLCD(LCD_C, SetXAddr3 | (col / 16));
-    
-    for(; col <= maxcol; col++){
+
+    for (; col <= maxcol; col++) {
       WriteLCD(LCD_D, LCDCache[(LCD_X * p) + col]);
     }
-    
+
   }
-  xUpdateMin = LCD_X - 1; 
+  xUpdateMin = LCD_X - 1;
   xUpdateMax = 0;
-  yUpdateMin = LCD_Y -1;
+  yUpdateMin = LCD_Y - 1;
   yUpdateMax = 0;
 }
- 
+
 size_t LCD::write(uint8_t c) {
- if (c == '\n') {
+  if (c == '\n') {
     Cursor_Y += 8;
     Cursor_X = 0;
   } else if (c == '\r') {
@@ -121,27 +121,27 @@ size_t LCD::write(uint8_t c) {
 
 void LCD::drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color, uint16_t bg, uint8_t size) {
 
-  if((x >= LCD_X) ||(y >= LCD_Y) || ((x + 5 * size - 1) < 0) || ((y + 8 * size - 1) < 0))
+  if ((x >= LCD_X) || (y >= LCD_Y) || ((x + 5 * size - 1) < 0) || ((y + 8 * size - 1) < 0))
     return;
 
-  for (int8_t i=0; i<6; i++ ) {
+  for (int8_t i = 0; i < 6; i++ ) {
     uint8_t line;
     if (i == 5)
       line = 0x0;
     else
-      line = pgm_read_byte(font+(c*5)+i);
-    for (int8_t j = 0; j<8; j++) {
+      line = pgm_read_byte(font + (c * 5) + i);
+    for (int8_t j = 0; j < 8; j++) {
       if (line & 0x1) {
         if (size == 1) // default size
-          drawPixel(x+i, y+j, color);
+          drawPixel(x + i, y + j, color);
         else { // big size
-          fillRect(x+(i*size), y+(j*size), size, size, color);
+          fillRect(x + (i * size), y + (j * size), size, size, color);
         }
       } else if (bg != color) {
         if (size == 1) // default size
-          drawPixel(x+i, y+j, bg);
+          drawPixel(x + i, y + j, bg);
         else { // big size
-          fillRect(x+i*size, y+j*size, size, size, bg);
+          fillRect(x + i * size, y + j * size, size, size, bg);
         }
       }
       line >>= 1;
@@ -149,7 +149,7 @@ void LCD::drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color, uint16
   }
 }
 
-void LCD::drawLine(int16_t x0, int16_t y0,int16_t x1, int16_t y1, uint16_t color) {
+void LCD::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) {
   int16_t steep = abs(y1 - y0) > abs(x1 - x0);
   if (steep) {
     swap(x0, y0);
@@ -174,7 +174,7 @@ void LCD::drawLine(int16_t x0, int16_t y0,int16_t x1, int16_t y1, uint16_t color
     ystep = -1;
   }
 
-  for (; x0<=x1; x0++) {
+  for (; x0 <= x1; x0++) {
     if (steep) {
       drawPixel(y0, x0, color);
     } else {
@@ -189,17 +189,17 @@ void LCD::drawLine(int16_t x0, int16_t y0,int16_t x1, int16_t y1, uint16_t color
 }
 
 void LCD::fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
-  for (int16_t i=x; i<x+w; i++) {
+  for (int16_t i = x; i < x + w; i++) {
     drawFastVLine(i, y, h, color);
   }
 }
 
 void LCD::drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color) {
-  drawLine(x, y, x, y+h-1, color);
+  drawLine(x, y, x, y + h - 1, color);
 }
 
 void LCD::drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) {
-  drawLine(x, y, x+w-1, y, color);
+  drawLine(x, y, x + w - 1, y, color);
 }
 
 void LCD::setTextColor(uint16_t c) {
@@ -207,16 +207,16 @@ void LCD::setTextColor(uint16_t c) {
   textbgcolor = c;
 }
 
- void LCD::setTextColor(uint16_t c, uint16_t b) {
-   textcolor = c;
-   textbgcolor = b;
- }
+void LCD::setTextColor(uint16_t c, uint16_t b) {
+  textcolor = c;
+  textbgcolor = b;
+}
 
- void LCD::drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t color) {
-  for (int16_t j=0; j<h; j++) {
-    for (int16_t i=0; i<w; i++ ) {
-      if (pgm_read_byte(bitmap + i + (j/8)*w) & _BV(j%8)) {
-drawPixel(x+i, y+j, color);
+void LCD::drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t color) {
+  for (int16_t j = 0; j < h; j++) {
+    for (int16_t i = 0; i < w; i++ ) {
+      if (pgm_read_byte(bitmap + i + (j / 8)*w) & _BV(j % 8)) {
+        drawPixel(x + i, y + j, color);
       }
     }
   }
@@ -233,25 +233,25 @@ void LCD::setCursor(int16_t x, int16_t y) {
 
 void LCD::drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
   drawFastHLine(x, y, w, color);
-  drawFastHLine(x, y+h-1, w, color);
+  drawFastHLine(x, y + h - 1, w, color);
   drawFastVLine(x, y, h, color);
-  drawFastVLine(x+w-1, y, h, color);
+  drawFastVLine(x + w - 1, y, h, color);
 }
 
 void LCD::drawCircle(int16_t x0, int16_t y0, int16_t r,
-uint16_t color) {
+                     uint16_t color) {
   int16_t f = 1 - r;
   int16_t ddF_x = 1;
   int16_t ddF_y = -2 * r;
   int16_t x = 0;
   int16_t y = r;
 
-  drawPixel(x0, y0+r, color);
-  drawPixel(x0, y0-r, color);
-  drawPixel(x0+r, y0, color);
-  drawPixel(x0-r, y0, color);
+  drawPixel(x0, y0 + r, color);
+  drawPixel(x0, y0 - r, color);
+  drawPixel(x0 + r, y0, color);
+  drawPixel(x0 - r, y0, color);
 
-  while (x<y) {
+  while (x < y) {
     if (f >= 0) {
       y--;
       ddF_y += 2;
@@ -260,7 +260,7 @@ uint16_t color) {
     x++;
     ddF_x += 2;
     f += ddF_x;
-  
+
     drawPixel(x0 + x, y0 + y, color);
     drawPixel(x0 - x, y0 + y, color);
     drawPixel(x0 + x, y0 - y, color);
@@ -269,19 +269,31 @@ uint16_t color) {
     drawPixel(x0 - y, y0 + x, color);
     drawPixel(x0 + y, y0 - x, color);
     drawPixel(x0 - y, y0 - x, color);
-    
+
+  }
+}
+
+void LCD::Rotate(bool value)
+{
+  if (value == true) {
+    WriteLCD(LCD_C, LCD_MIRROR_Y | 0x08);
+    WriteLCD(LCD_C, LCD_MIRROR_X | 1);
+  }
+  else if (value == false) {
+    WriteLCD(LCD_C, LCD_MIRROR_Y | 0);
+    WriteLCD(LCD_C, LCD_MIRROR_X | 0);
   }
 }
 
 void LCD::drawCircleHelper( int16_t x0, int16_t y0,
-               int16_t r, uint8_t cornername, uint16_t color) {
+                            int16_t r, uint8_t cornername, uint16_t color) {
   int16_t f = 1 - r;
   int16_t ddF_x = 1;
   int16_t ddF_y = -2 * r;
   int16_t x = 0;
   int16_t y = r;
 
-  while (x<y) {
+  while (x < y) {
     if (f >= 0) {
       y--;
       ddF_y += 2;
@@ -310,13 +322,13 @@ void LCD::drawCircleHelper( int16_t x0, int16_t y0,
 }
 
 void LCD::fillCircle(int16_t x0, int16_t y0, int16_t r,
-uint16_t color) {
-  drawFastVLine(x0, y0-r, 2*r+1, color);
+                     uint16_t color) {
+  drawFastVLine(x0, y0 - r, 2 * r + 1, color);
   fillCircleHelper(x0, y0, r, 3, 0, color);
 }
 
 void LCD::fillCircleHelper(int16_t x0, int16_t y0, int16_t r,
-uint8_t cornername, int16_t delta, uint16_t color) {
+                           uint8_t cornername, int16_t delta, uint16_t color) {
 
   int16_t f = 1 - r;
   int16_t ddF_x = 1;
@@ -324,7 +336,7 @@ uint8_t cornername, int16_t delta, uint16_t color) {
   int16_t x = 0;
   int16_t y = r;
 
-  while (x<y) {
+  while (x < y) {
     if (f >= 0) {
       y--;
       ddF_y += 2;
@@ -335,12 +347,12 @@ uint8_t cornername, int16_t delta, uint16_t color) {
     f += ddF_x;
 
     if (cornername & 0x1) {
-      drawFastVLine(x0+x, y0-y, 2*y+1+delta, color);
-      drawFastVLine(x0+y, y0-x, 2*x+1+delta, color);
+      drawFastVLine(x0 + x, y0 - y, 2 * y + 1 + delta, color);
+      drawFastVLine(x0 + y, y0 - x, 2 * x + 1 + delta, color);
     }
     if (cornername & 0x2) {
-      drawFastVLine(x0-x, y0-y, 2*y+1+delta, color);
-      drawFastVLine(x0-y, y0-x, 2*x+1+delta, color);
+      drawFastVLine(x0 - x, y0 - y, 2 * y + 1 + delta, color);
+      drawFastVLine(x0 - y, y0 - x, 2 * x + 1 + delta, color);
     }
   }
 }
@@ -350,40 +362,40 @@ void LCD::fillScreen(uint16_t color) {
 }
 
 void LCD::drawRoundRect(int16_t x, int16_t y, int16_t w,
-  int16_t h, int16_t r, uint16_t color) {
+                        int16_t h, int16_t r, uint16_t color) {
   // smarter version
-  drawFastHLine(x+r , y , w-2*r, color); // Top
-  drawFastHLine(x+r , y+h-1, w-2*r, color); // Bottom
-  drawFastVLine( x , y+r , h-2*r, color); // Left
-  drawFastVLine( x+w-1, y+r , h-2*r, color); // Right
+  drawFastHLine(x + r , y , w - 2 * r, color); // Top
+  drawFastHLine(x + r , y + h - 1, w - 2 * r, color); // Bottom
+  drawFastVLine( x , y + r , h - 2 * r, color); // Left
+  drawFastVLine( x + w - 1, y + r , h - 2 * r, color); // Right
   // draw four corners
-  drawCircleHelper(x+r , y+r , r, 1, color);
-  drawCircleHelper(x+w-r-1, y+r , r, 2, color);
-  drawCircleHelper(x+w-r-1, y+h-r-1, r, 4, color);
-  drawCircleHelper(x+r , y+h-r-1, r, 8, color);
+  drawCircleHelper(x + r , y + r , r, 1, color);
+  drawCircleHelper(x + w - r - 1, y + r , r, 2, color);
+  drawCircleHelper(x + w - r - 1, y + h - r - 1, r, 4, color);
+  drawCircleHelper(x + r , y + h - r - 1, r, 8, color);
 }
 
 void LCD::fillRoundRect(int16_t x, int16_t y, int16_t w,
-int16_t h, int16_t r, uint16_t color) {
+                        int16_t h, int16_t r, uint16_t color) {
   // smarter version
-  fillRect(x+r, y, w-2*r, h, color);
+  fillRect(x + r, y, w - 2 * r, h, color);
 
   // draw four corners
-  fillCircleHelper(x+w-r-1, y+r, r, 1, h-2*r-1, color);
-  fillCircleHelper(x+r , y+r, r, 2, h-2*r-1, color);
+  fillCircleHelper(x + w - r - 1, y + r, r, 1, h - 2 * r - 1, color);
+  fillCircleHelper(x + r , y + r, r, 2, h - 2 * r - 1, color);
 }
 
 void LCD::drawTriangle(int16_t x0, int16_t y0,
-int16_t x1, int16_t y1,
-int16_t x2, int16_t y2, uint16_t color) {
+                       int16_t x1, int16_t y1,
+                       int16_t x2, int16_t y2, uint16_t color) {
   drawLine(x0, y0, x1, y1, color);
   drawLine(x1, y1, x2, y2, color);
   drawLine(x2, y2, x0, y0, color);
 }
 
 void LCD::fillTriangle ( int16_t x0, int16_t y0,
-int16_t x1, int16_t y1,
-int16_t x2, int16_t y2, uint16_t color) {
+                         int16_t x1, int16_t y1,
+                         int16_t x2, int16_t y2, uint16_t color) {
 
   int16_t a, b, y, last;
 
@@ -398,25 +410,25 @@ int16_t x2, int16_t y2, uint16_t color) {
     swap(y0, y1); swap(x0, x1);
   }
 
-  if(y0 == y2) { // Handle awkward all-on-same-line case as its own thing
+  if (y0 == y2) { // Handle awkward all-on-same-line case as its own thing
     a = b = x0;
-    if(x1 < a) a = x1;
-    else if(x1 > b) b = x1;
-    if(x2 < a) a = x2;
-    else if(x2 > b) b = x2;
-    drawFastHLine(a, y0, b-a+1, color);
+    if (x1 < a) a = x1;
+    else if (x1 > b) b = x1;
+    if (x2 < a) a = x2;
+    else if (x2 > b) b = x2;
+    drawFastHLine(a, y0, b - a + 1, color);
     return;
   }
 
   int16_t
-    dx01 = x1 - x0,
-    dy01 = y1 - y0,
-    dx02 = x2 - x0,
-    dy02 = y2 - y0,
-    dx12 = x2 - x1,
-    dy12 = y2 - y1,
-    sa = 0,
-    sb = 0;
+  dx01 = x1 - x0,
+  dy01 = y1 - y0,
+  dx02 = x2 - x0,
+  dy02 = y2 - y0,
+  dx12 = x2 - x1,
+  dy12 = y2 - y1,
+  sa = 0,
+  sb = 0;
 
   // For upper part of triangle, find scanline crossings for segments
   // 0-1 and 0-2. If y1=y2 (flat-bottomed triangle), the scanline y1
@@ -424,71 +436,84 @@ int16_t x2, int16_t y2, uint16_t color) {
   // error there), otherwise scanline y1 is skipped here and handled
   // in the second loop...which also avoids a /0 error here if y0=y1
   // (flat-topped triangle).
-  if(y1 == y2) last = y1; // Include y1 scanline
-  else last = y1-1; // Skip it
+  if (y1 == y2) last = y1; // Include y1 scanline
+  else last = y1 - 1; // Skip it
 
-  for(y=y0; y<=last; y++) {
+  for (y = y0; y <= last; y++) {
     a = x0 + sa / dy01;
     b = x0 + sb / dy02;
     sa += dx01;
     sb += dx02;
     /* longhand:
-a = x0 + (x1 - x0) * (y - y0) / (y1 - y0);
-b = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
-*/
-    if(a > b) swap(a,b);
-    drawFastHLine(a, y, b-a+1, color);
+      a = x0 + (x1 - x0) * (y - y0) / (y1 - y0);
+      b = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
+    */
+    if (a > b) swap(a, b);
+    drawFastHLine(a, y, b - a + 1, color);
   }
 
   // For lower part of triangle, find scanline crossings for segments
   // 0-2 and 1-2. This loop is skipped if y1=y2.
   sa = dx12 * (y - y1);
   sb = dx02 * (y - y0);
-  for(; y<=y2; y++) {
+  for (; y <= y2; y++) {
     a = x1 + sa / dy12;
     b = x0 + sb / dy02;
     sa += dx12;
     sb += dx02;
     /* longhand:
-a = x1 + (x2 - x1) * (y - y1) / (y2 - y1);
-b = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
-*/
-    if(a > b) swap(a,b);
-    drawFastHLine(a, y, b-a+1, color);
+      a = x1 + (x2 - x1) * (y - y1) / (y2 - y1);
+      b = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
+    */
+    if (a > b) swap(a, b);
+    drawFastHLine(a, y, b - a + 1, color);
   }
 }
 float lineX, lineX1;
 float lineY, lineY1;
 
-void LCD::drawAxisLines(int angle, int clearBit) {
+void LCD::drawAxisLines(int altPosition , int angle, int clearBit) {
 
- int upper = 5;
-  lineX = round(LCD_X / 2 + ((RADIUS-4) * cos(-angle * PI / 180) ));
-  lineY = round(LCD_Y / 2 + ((RADIUS-4) * sin(-angle * PI / 180)));
-  lineX1 = round(LCD_X / 2 + ((RADIUS-4) * cos(-(180 + angle) * PI / 180)) );
-  lineY1 = round(LCD_Y / 2 + ((RADIUS-4) * sin(-(180 + angle) * PI / 180)));
-  
-  int lineTX = round(LCD_X / 2 + ((RADIUS-20) * cos(-angle * PI / 180) ));
-  int lineTY = round(LCD_Y / 2 + ((RADIUS-20) * sin(-angle * PI / 180)));
-  int lineTX1 = round(LCD_X / 2 + ((RADIUS-20) * cos(-(180 + angle) * PI / 180)) );
-  int lineTY1 = round(LCD_Y / 2 + ((RADIUS-20) * sin(-(180 + angle) * PI / 180)));
-  int lineTX2 = round(LCD_X / 2 + ((RADIUS-20) * cos(-(90 + angle) * PI / 180)) );
-  int lineTY2 = round(LCD_Y / 2 + ((RADIUS-20) * sin(-(90 + angle) * PI / 180)));
+  lineX = round(LCD_X / 2 + ( (RADIUS - 4 ) * cos(-angle * PI / 180)  )) ;
+  lineY = round(LCD_Y / 2 + ( (RADIUS - 4 ) * sin(-angle * PI / 180) ));
+  lineX1 = round(LCD_X / 2 + ((RADIUS - 4) * cos(-(180 + angle) * PI / 180) ) );
+  lineY1 = round(LCD_Y / 2 + ((RADIUS  -4) * sin(-(180 + angle) * PI / 180)));
 
+  int lineTX = round(LCD_X / 2 + ((RADIUS - 20) * cos(-angle * PI / 180) ));
+  int lineTY = round(LCD_Y / 2 + ((RADIUS - 20) * sin(-angle * PI / 180)));
+  int lineTX1 = round(LCD_X / 2 + ((RADIUS - 20) * cos(-(180 + angle) * PI / 180)) );
+  int lineTY1 = round(LCD_Y / 2 + ((RADIUS - 20) * sin(-(180 + angle) * PI / 180)));
+  int lineTX2 = round(LCD_X / 2 + ((RADIUS - 20) * cos(-(90 + angle) * PI / 180)) );
+  int lineTY2 = round(LCD_Y / 2 + ((RADIUS - 20) * sin(-(90 + angle) * PI / 180)));
 
-  drawLine(48, 32 - upper , lineX , lineY, clearBit);
-  drawLine(48, 32 - upper, lineX1, lineY1, clearBit);
-  drawTriangle(lineTX, lineTY,lineTX1, lineTY1,lineTX2, lineTY2, clearBit); //Head Sign
-
-setCursor(46,0);
-print(angle);
-if(angle>0)
+  setCursor(60, 0);
+  print(angle);
+  if (angle > 0)
+  {
+    print(" \033 ");//<-
+  }
+  else if (angle < 0)
+  {
+    print(" \032 ");//->
+  }
+setCursor(76,LCD_Y - 10);
+print(String(altPosition));
+if(altPosition > 0)
 {
-print(" \033 ");//<-
+  setCursor(80,LCD_Y / 2 - 5);
+  print("\030");
 }
-else if (angle<0)
+if(altPosition <0)
 {
-print(" \032 ");//->
+    setCursor(80,LCD_Y / 2 + 5);
+  print("\031");
 }
+
+
+  drawLine(LCD_X / 2  , LCD_Y/2 - altPosition, lineX , lineY-altPosition, clearBit);
+  drawLine(LCD_X / 2  , LCD_Y/2 - altPosition , lineX1 , lineY1 -altPosition, clearBit);
+  drawTriangle(lineTX, lineTY- altPosition, lineTX1, lineTY1- altPosition, lineTX2 , lineTY2- altPosition, clearBit); //Head Sign
+
+
 }
 

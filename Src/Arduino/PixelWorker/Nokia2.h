@@ -22,6 +22,9 @@
 #define SetXAddr4 0x00
 #define SetXAddr3 0x10
 
+#define LCD_MIRROR_Y 0xC0
+#define LCD_MIRROR_X 0xA0
+
 #define swap(a, b) { int16_t t = a; a = b; b = t; }
 
 class LCD : public Print
@@ -56,7 +59,8 @@ class LCD : public Print
     void setTextColor(uint16_t c, uint16_t bg);
     void setTextSize(uint8_t s);
     
-   void drawAxisLines(int angle, int clearBit);
+   void drawAxisLines(int altPosition ,int angle, int clearBit);
+   void Rotate(bool value);
     
   private:
   void UpdateBox (int xmin, int ymin, int xmax, int ymax);
