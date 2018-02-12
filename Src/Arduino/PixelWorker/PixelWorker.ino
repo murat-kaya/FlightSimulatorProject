@@ -10,7 +10,7 @@ String altit = "", altitold = "";
 static LCD lcd; //Nokia 1100 Lib
 void setup() {
   lcd.Setup();
-  lcd.Rotate(true);
+ // lcd.Rotate(true);
   lcd.Clear();
 lcd.print("SKY");
 //void LCD::drawCircleHelper( int16_t x0, int16_t y0,int16_t r, uint8_t cornername, uint16_t color)
@@ -41,8 +41,8 @@ void setAltitude() {
       altit += getChar();
       altit += getChar();
      if (altit != altitold) {
-          lcd.drawAxisLines(-10, altitold.toInt(), 0);
-          lcd.drawAxisLines(-10, altit.toInt(), 1);
+          lcd.drawAxisLines(-3, altitold.toInt(), 0);
+          lcd.drawAxisLines(-3, altit.toInt(), 1);
 
         altitold = altit;
      }
